@@ -2,6 +2,8 @@ package com.example.Cric.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Game {
 
@@ -12,7 +14,7 @@ public class Game {
     private boolean SecondInningPlayed;
     private int teamAID;
     private int teamBID;
-    private int WinnerID;
+    private Integer WinnerID;
     private int teamARuns;
     private int teamBRuns;
     private int maxBalls;
@@ -20,6 +22,19 @@ public class Game {
     private int teamAWickets;
     //    @Column(name = "teamA_Wickets")
     private int teamBWickets;
+
+//    @ElementCollection
+//    @Column(name = "ball_no")
+//    @CollectionTable(name = "ball_score", joinColumns = {@JoinColumn(name = "gameID")})
+//    private List<Integer> ballsScore;
+//
+//    public List<Integer> getBallsScore() {
+//        return ballsScore;
+//    }
+//
+//    public void setBallsScore(List<Integer> ballsScore) {
+//        this.ballsScore = ballsScore;
+//    }
 
     @Override
     public String toString() {
@@ -99,11 +114,11 @@ public class Game {
         this.teamBID = teamBID;
     }
 
-    public int getWinnerID() {
+    public Integer getWinnerID() {
         return WinnerID;
     }
 
-    public void setWinnerID(int winnerID) {
+    public void setWinnerID(Integer winnerID) {
         WinnerID = winnerID;
     }
 

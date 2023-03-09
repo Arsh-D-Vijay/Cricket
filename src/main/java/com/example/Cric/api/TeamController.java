@@ -33,9 +33,9 @@ public class TeamController {
         teamService.deleteTeamByID(id);
     }
 
-    //    @PutMapping(value = "/{teamid}&playerid={id}")
-    //    public void addPlayerToTeam(@PathVariable("teamid") int teamid,@PathVariable("id") int id){
-    //        teamService.addPlayerToTeam(teamid,id);
-    //    }
+        @PutMapping(value = "/{teamid}&playerid={id}")
+        public void addPlayerToTeam(@PathVariable("teamid") int teamid,@PathVariable("id") int id){
+            teamService.addPlayerToTeam(teamid,id);
+        }
 
 }
