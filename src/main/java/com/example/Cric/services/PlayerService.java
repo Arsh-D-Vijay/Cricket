@@ -9,23 +9,23 @@ import java.util.List;
 @Service
 public class PlayerService {
     @Autowired
-    private PlayersRepo repo;
+    private PlayersRepo playersRepo;
 
     public List<Player> getAllPlayers(){
-        return repo.findAll();
+        return playersRepo.findAll();
     }
 
     public void addPlayer(Player player){
-        repo.save(player);
+        playersRepo.save(player);
     }
 
     public Player getPlayerByID(int id){
-        return repo.findById(id).get();
+        return playersRepo.findById(id).get();
     }
 
     public boolean deletePlayerByID(int id){
         try {
-            repo.deleteById(id);
+            playersRepo.deleteById(id);
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -34,12 +34,12 @@ public class PlayerService {
     }
 
     public void updatePlayerPerformance(int id){
-        Player player = repo.findById(id).get();
-        repo.save(player);
+        Player player = playersRepo.findById(id).get();
+        playersRepo.save(player);
     }
     public int playNextBall(int id) {
         double number = Math.random();
-        Player player = repo.findById(id).get();
+        Player player = playersRepo.findById(id).get();
         int run  = 0;
         if (player.getPlayingStyle() == 1) {
             // Probability Distribution for Bowler
@@ -83,7 +83,7 @@ public class PlayerService {
             }
         }
         player.addTotalRunsScored(run);
-        repo.save(player);
+        playersRepo.save(player);
         return run;
     }
 

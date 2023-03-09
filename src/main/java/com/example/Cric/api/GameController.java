@@ -35,4 +35,10 @@ public class GameController {
         System.out.println(gameService.getGameByID(id).toString());
     }
 
+    @PutMapping(path= "/rollback/{id}/{balls}")
+    public void rollbackMatch(@PathVariable("id") int id,@PathVariable("balls") int balls){
+        gameService.rollBack(id,balls);
+    }
+
+
 }
