@@ -28,45 +28,53 @@ public class InningService {
         return inningRepo.findById(id).get();
     }
 
-    public void initializeInning(String gameID, String battingTeamID, int maxBalls, int totalPlayers) {
+    public Inning initializeInning(String gameID, String battingTeamID, int maxBalls, int totalPlayers) {
         Inning inning = new Inning(gameID,battingTeamID,maxBalls, totalPlayers);
         inning.setStrikerID(nextBatsman(inning.getBattingTeamID(), inning.getWickets()));
         inning.setNonStrikerID(nextBatsman(inning.getBattingTeamID(), inning.getWickets()+1));
         inningRepo.save(inning);
+        return inning;
     }
-    public void initializeInning(String gameID, String battingTeamID, int maxBalls, int totalPlayers, int target) {
+    public Inning initializeInning(String gameID, String battingTeamID, int maxBalls, int totalPlayers, int target) {
         Inning inning = new Inning(gameID,battingTeamID,maxBalls, totalPlayers);
         inning.setTarget(target);
         inning.setStrikerID(nextBatsman(inning.getBattingTeamID(), inning.getWickets()));
         inning.setNonStrikerID(nextBatsman(inning.getBattingTeamID(), inning.getWickets()+1));
         inningRepo.save(inning);
+        return inning;
     }
 
-    public int play(String secondInningID, int ballsToPlay) {
-        Inning inning = getInningByID(secondInningID);
+    public int play(String inningID, int ballsToPlay) {
+        Inning inning = getInningByID(inningID);
         int balls = inning.getBallsPlayed() + ballsToPlay;
         int run = 0;
-        while(inning.getBallsPlayed() <= inning.getMaxBalls() && inning.getBallsPlayed() <= balls){
+        while(inning.getBallsPlayed() < inning.getMaxBalls() && inning.getBallsPlayed() <= balls){
             run = update(inning);
             if(run == GAME_ENDED){
+                inningRepo.save(inning);
                 return GAME_ENDED;
             }
+//            System.out.println("REACHED HERE");
             inning.setBallsPlayed(inning.getBallsPlayed()+1);
         }
         teamService.updateTeam(teamService.getTeamByID(inning.getBattingTeamID()));
         inningRepo.save(inning);
+        if(inning.getBallsPlayed() == inning.getMaxBalls()){
+            return GAME_ENDED;
+        }
         return GAME_CONTINUE;
     }
 
     private int update(Inning inning) {
         int run = playerService.playNextBall(inning.getStrikerID());
+//        System.out.println("RUNS : "+ run);
         ballOutcomeService.addBallOutcome(
                 new BallOutcome(inning.getGameID(), inning.getBattingTeamID(), inning.getBallsPlayed(),
                         inning.getStrikerID(),
                         run));
+//        System.out.println("BALL SAVED");
         if (run != WICKET) {
             inning.setRuns(inning.getRuns() + run);
-
             if ((inning.getTarget() != null) && (inning.getRuns() > inning.getTarget())) {
                 return GAME_ENDED;
             }

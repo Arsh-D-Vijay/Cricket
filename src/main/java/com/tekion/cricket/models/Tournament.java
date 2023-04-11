@@ -2,10 +2,10 @@ package com.tekion.cricket.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document("Tournaments")
@@ -16,7 +16,6 @@ public class Tournament {
     @Indexed(unique = true)
     private String tournamentID;
     private List<String> teamsIDsList;
-    @Transient
     private List<String> teamLeftToPlay;
     private String winnerID;
     private List<String> matchesID;
@@ -30,7 +29,12 @@ public class Tournament {
         this.teamsIDsList = teamsIDsList;
         this.maxBalls = maxBalls;
         this.totalPlayers = totalPlayers;
-        this.teamLeftToPlay = teamsIDsList;
     }
 
+    @Override
+    public String toString() {
+        return "Tournament{" + "tournamentID='" + tournamentID + '\'' + ", teamsIDsList=" + teamsIDsList +
+               ", teamLeftToPlay=" + teamLeftToPlay + ", winnerID='" + winnerID + '\'' + ", matchesID=" + matchesID +
+               ", maxBalls=" + maxBalls + ", totalPlayers=" + totalPlayers + '}';
+    }
 }

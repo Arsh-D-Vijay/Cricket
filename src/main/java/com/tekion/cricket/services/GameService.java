@@ -1,6 +1,8 @@
 package com.tekion.cricket.services;
 
 import com.tekion.cricket.models.Game;
+import com.tekion.cricket.models.Inning;
+import com.tekion.cricket.models.Team;
 import com.tekion.cricket.repository.GamesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +26,19 @@ public class GameService {
     private InningService inningService;
 
     public ResponseEntity<Object> Autoplay(String gameId){
+//        System.out.println("Looking For Game");
         Game game;
         if(gamesRepo.findById(gameId).isPresent()){
+
             game = gamesRepo.findById(gameId).get();
         }else{
             return ResponseEntity.badRequest().body("GAME NOT FOUND");
         }
+//        System.out.println("Have I reached Here");
         int balls = gamesRepo.findById(gameId).get().getMaxBalls() + 1;
         playInnings(gameId, balls);
         playInnings(gameId, balls);
+//        System.out.println("WONDER WHO WON!!!");
         return ResponseEntity.ok("GAME ENDED !!! ");
     }
 
@@ -59,8 +65,12 @@ public class GameService {
 
     public ResponseEntity<Object> initializeNewGame(Game game) {
         try {
-            teamService.getTeamByID(game.getTeamAID()).addMatchesPlayed();
-            teamService.getTeamByID(game.getTeamBID()).addMatchesPlayed();
+            Team teamB = teamService.getTeamByID(game.getTeamBID());
+            teamB.addMatchesPlayed();
+            teamService.updateTeam(teamB);
+            Team teamA = teamService.getTeamByID(game.getTeamAID());
+            teamA.addMatchesPlayed();
+            teamService.updateTeam(teamA);
             gamesRepo.save(game);
             return ResponseEntity.ok("Game Initialized Successfully");
         }catch (Exception e){
@@ -75,20 +85,26 @@ public class GameService {
         }else{
             return ResponseEntity.badRequest().body("GAME NOT FOUND");
         }
+//        System.out.println(":::: INNING ::::");
         if (game.isSecondInningPlayed()) {
             resultOrContinue(game);
         } else if (game.isFirstInningPlayed()) {
-            if (game.getSecondInningID().isEmpty()) {
-                inningService.initializeInning(gameID, game.getTeamBID(), game.getMaxBalls(), game.getTotalPlayers(),
+            if (game.getSecondInningID() == null) {
+                Inning inning = inningService.initializeInning(gameID, game.getTeamBID(), game.getMaxBalls(),
+                        game.getTotalPlayers(),
                         inningService.getInningByID(game.getFirstInningID()).getRuns());
+                game.setSecondInningID(inning.getInningID());
             }
             int gameContinue = inningService.play(game.getSecondInningID(), ballsToPlay);
             if (gameContinue == GAME_ENDED) {
                 resultOrContinue(game);
             }
         }else{
-            if (game.getFirstInningID().isEmpty()){
-                inningService.initializeInning(gameID, game.getTeamBID(), game.getMaxBalls(), game.getTotalPlayers());
+            if (game.getFirstInningID() == null){
+                Inning inning = inningService.initializeInning(gameID, game.getTeamAID(), game.getMaxBalls(),
+                        game.getTotalPlayers());
+                game.setFirstInningID(inning.getInningID());
+
             }
             int gameContinue = inningService.play(game.getFirstInningID(), ballsToPlay);
             if (gameContinue == GAME_ENDED) {
@@ -106,10 +122,14 @@ public class GameService {
             game.setSecondInningPlayed(true);
             if (inningService.getInningByID(game.getFirstInningID()).getRuns() > inningService.getInningByID(game.getSecondInningID()).getRuns()) {
                 game.setWinnerID(game.getTeamAID());
-                teamService.getTeamByID(game.getTeamAID()).addMatchesWon();
+                Team team = teamService.getTeamByID(game.getTeamAID());
+                team.addMatchesWon();
+                teamService.updateTeam(team);
             } else if (inningService.getInningByID(game.getFirstInningID()).getRuns() < inningService.getInningByID(game.getSecondInningID()).getRuns()) {
                 game.setWinnerID(game.getTeamBID());
-                teamService.getTeamByID(game.getTeamBID()).addMatchesWon();
+                Team team = teamService.getTeamByID(game.getTeamBID());
+                team.addMatchesWon();
+                teamService.updateTeam(team);
             } else {
                 game.setWinnerID("Draw");
             }
