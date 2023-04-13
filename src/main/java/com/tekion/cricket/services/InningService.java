@@ -49,13 +49,13 @@ public class InningService {
         int balls = inning.getBallsPlayed() + ballsToPlay;
         int run = 0;
         while(inning.getBallsPlayed() < inning.getMaxBalls() && inning.getBallsPlayed() <= balls){
-            run = update(inning);
+            inning.setBallsPlayed(inning.getBallsPlayed()+1);
+            run = updateBall(inning);
             if(run == GAME_ENDED){
                 inningRepo.save(inning);
                 return GAME_ENDED;
             }
 //            System.out.println("REACHED HERE");
-            inning.setBallsPlayed(inning.getBallsPlayed()+1);
         }
         teamService.updateTeam(teamService.getTeamByID(inning.getBattingTeamID()));
         inningRepo.save(inning);
@@ -65,7 +65,7 @@ public class InningService {
         return GAME_CONTINUE;
     }
 
-    private int update(Inning inning) {
+    private int updateBall(Inning inning) {
         int run = playerService.playNextBall(inning.getStrikerID());
 //        System.out.println("RUNS : "+ run);
         ballOutcomeService.addBallOutcome(
@@ -78,6 +78,9 @@ public class InningService {
             if ((inning.getTarget() != null) && (inning.getRuns() > inning.getTarget())) {
                 return GAME_ENDED;
             }
+            if(run%2 != 0){
+                swapSides(inning);
+            }
         } else {
             inning.setWickets(inning.getWickets() + 1);
             if (inning.getWickets() == inning.getTotalPlayers() - 1) {
@@ -87,6 +90,14 @@ public class InningService {
         }
         return run;
     }
+
+    private void swapSides(Inning inning) {
+        String temp = inning.getStrikerID();
+        inning.setStrikerID(inning.getNonStrikerID());
+        inning.setNonStrikerID(temp);
+        inningRepo.save(inning);
+    }
+
     private String nextBatsman(String teamID, int wickets) {
         Team team = teamService.getTeamByID(teamID);
         return team.getPlayersIDsList().get(wickets);

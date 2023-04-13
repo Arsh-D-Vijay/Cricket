@@ -49,9 +49,16 @@ public class GameController {
 
     // SERIES GAMES
     @PostMapping(path = "/series/{noOfMatches}")
-    public ResponseEntity<Object> seriesInitiator(@PathVariable("noOfMatches") int noOfMatches, @RequestBody Game game) {
+    public ResponseEntity<Object> seriesInitiator(@PathVariable("noOfMatches") int noOfMatches,
+                                                  @RequestBody Game game) {
         gameService.seriesGames(game, noOfMatches);
         return ResponseEntity.ok("Series Initiated");
+    }
+
+    // ROLLBACK
+    @PutMapping(path = "/{id}/rollback/{nBalls}")
+    public ResponseEntity<Object> rollbackNBalls(@PathVariable("id") String gameID, @PathVariable("nBalls") int nBalls){
+        return gameService.rollbackNBalls(gameID,nBalls);
     }
 
 }

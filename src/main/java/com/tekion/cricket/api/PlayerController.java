@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/player")
 public class PlayerController {
@@ -22,7 +20,7 @@ public class PlayerController {
 
     @PostMapping
     public ResponseEntity<Object> addPlayer(@RequestBody Player player) {
-        return playerService.addPlayer(player);
+        return playerService.addOrUpdatePlayer(player);
     }
 
     @GetMapping(path = "/{id}")

@@ -3,11 +3,8 @@ package com.tekion.cricket.services;
 import com.tekion.cricket.models.Player;
 import com.tekion.cricket.repository.PlayersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class PlayerService {
@@ -23,7 +20,7 @@ public class PlayerService {
         }
     }
 
-    public ResponseEntity<Object> addPlayer(Player player) {
+    public ResponseEntity<Object> addOrUpdatePlayer(Player player) {
         try{
             playersRepo.save(player);
             return ResponseEntity.accepted().body("PLAYER ADDED !!");

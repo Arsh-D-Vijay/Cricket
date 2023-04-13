@@ -16,4 +16,12 @@ public class BallOutcomeService {
         ballsRepo.save(ballOutcome);
     }
 
+    public BallOutcome getBall(String gameID, String battingTeamID, int ballNumber){
+        return ballsRepo.findByGameIDAndBattingTeamIDAndBallNumber(gameID,battingTeamID,ballNumber);
+    }
+
+    public void deleteBall(BallOutcome ball){
+        ballsRepo.delete(ball);
+    }
+
 }
