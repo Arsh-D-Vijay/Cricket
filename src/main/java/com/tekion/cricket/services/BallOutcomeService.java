@@ -17,7 +17,7 @@ public class BallOutcomeService {
     }
 
     public BallOutcome getBall(String gameID, String battingTeamID, int ballNumber){
-        return ballsRepo.findByGameIDAndBattingTeamIDAndBallNumber(gameID,battingTeamID,ballNumber);
+        return ballsRepo.findByGameIDAndTeamIDAndBallNumber(gameID,battingTeamID,ballNumber);
     }
 
     public void deleteBall(BallOutcome ball){

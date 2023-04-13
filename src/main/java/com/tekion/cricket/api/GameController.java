@@ -51,8 +51,7 @@ public class GameController {
     @PostMapping(path = "/series/{noOfMatches}")
     public ResponseEntity<Object> seriesInitiator(@PathVariable("noOfMatches") int noOfMatches,
                                                   @RequestBody Game game) {
-        gameService.seriesGames(game, noOfMatches);
-        return ResponseEntity.ok("Series Initiated");
+        return gameService.seriesGames(game, noOfMatches);
     }
 
     // ROLLBACK

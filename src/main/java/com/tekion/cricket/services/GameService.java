@@ -185,6 +185,8 @@ public class GameService {
             inning.setBallsPlayed(inning.getBallsPlayed() - 1);
             ballsOutcomeService.deleteBall(lastBall);
         }
+        gamesRepo.save(game);
+        inningService.saveAndUpdateInning(inning);
         return ResponseEntity.ok(nBalls + " Balls rolled back successfully");
     }
 

@@ -28,6 +28,10 @@ public class InningService {
         return inningRepo.findById(id).get();
     }
 
+    public void saveAndUpdateInning(Inning inning){
+        inningRepo.save(inning);
+    }
+
     public Inning initializeInning(String gameID, String battingTeamID, int maxBalls, int totalPlayers) {
         Inning inning = new Inning(gameID,battingTeamID,maxBalls, totalPlayers);
         inning.setStrikerID(nextBatsman(inning.getBattingTeamID(), inning.getWickets()));
