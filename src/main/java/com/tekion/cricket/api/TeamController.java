@@ -26,7 +26,7 @@ public class TeamController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getTeamByID(@PathVariable("id") String id) {
+    public ResponseEntity<Object> getTeamByID(@PathVariable("id") int id) {
         return teamService.getByID(id);
     }
 

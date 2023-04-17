@@ -2,7 +2,6 @@ package com.tekion.cricket.api;
 
 
 import com.tekion.cricket.models.Game;
-import com.tekion.cricket.services.BallOutcomeService;
 import com.tekion.cricket.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +13,6 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
-    @Autowired
-    private BallOutcomeService ballsOutcomeService;
 
     //    ALL GAMES
     @GetMapping("/all")
@@ -25,7 +22,7 @@ public class GameController {
 
     // GAME BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getMatchByID(@PathVariable("id") String id) {
+    public ResponseEntity<Object> getMatchByID(@PathVariable("id") int id) {
         return gameService.getGameByID(id);
     }
 
@@ -37,13 +34,13 @@ public class GameController {
 
     // PLAY 'N' BALLS
     @PutMapping(path = "/{id}/{balls}")
-    public ResponseEntity<Object> playMatch(@PathVariable("id") String id, @PathVariable("balls") int balls) {
+    public ResponseEntity<Object> playMatch(@PathVariable("id") int id, @PathVariable("balls") int balls) {
         return gameService.playInnings(id, balls);
     }
 
     // AUTOPLAY
     @PutMapping(path = "/{id}/Autoplay")
-    public ResponseEntity<Object> playMatch(@PathVariable("id") String id) {
+    public ResponseEntity<Object> playMatch(@PathVariable("id") int id) {
         return gameService.Autoplay(id);
     }
 
@@ -57,7 +54,7 @@ public class GameController {
 
     // ROLLBACK
     @PutMapping(path = "/{id}/rollback/{nBalls}")
-    public ResponseEntity<Object> rollbackNBalls(@PathVariable("id") String gameID, @PathVariable("nBalls") int nBalls){
+    public ResponseEntity<Object> rollbackNBalls(@PathVariable("id") int gameID, @PathVariable("nBalls") int nBalls){
         return gameService.rollbackNBalls(gameID,nBalls);
     }
 

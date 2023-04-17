@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import static com.tekion.cricket.util.Constants.WICKET;
+
 @Service
 public class PlayerService {
 
@@ -30,15 +32,17 @@ public class PlayerService {
         }
     }
 
-    public ResponseEntity<Object> getPlayerByID(String id) {
-        if(playersRepo.findById(id).isPresent()){
-            return ResponseEntity.ok(playersRepo.findById(id).get());
-        }else{
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Object> getPlayerByID(int id) {
+        Player player;
+        if (playersRepo.findById(id).isPresent()) {
+            player = playersRepo.findById(id).get();
+        } else {
+            return ResponseEntity.badRequest().body("GAME NOT FOUND");
         }
+        return ResponseEntity.ok(player);
     }
 
-    public int playNextBall(String id) {
+    public int playNextBall(int id) {
         double number = Math.random();
         Player player = playersRepo.findById(id).get();
         int run = 0;
@@ -60,7 +64,7 @@ public class PlayerService {
             } else if (number < 0.9) {
                 run = 6;
             } else {
-                return -1;
+                return WICKET;
             }
         } else {
             // Probability Distribution for Batsman and All-Rounder
@@ -80,7 +84,7 @@ public class PlayerService {
             } else if (number < 0.95) {
                 run = 6;
             } else {
-                return -1;
+                return WICKET;
             }
         }
         player.addTotalRunsScored(run);

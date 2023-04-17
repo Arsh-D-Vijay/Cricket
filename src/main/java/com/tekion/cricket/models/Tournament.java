@@ -1,40 +1,43 @@
 package com.tekion.cricket.models;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.ArrayList;
 import java.util.List;
 
-@Document("Tournaments")
+@Entity
 @Data
 public class Tournament {
 
     @Id
-    @Indexed(unique = true)
-    private String tournamentID;
-    private List<String> teamsIDsList;
-    private List<String> teamLeftToPlay;
-    private String winnerID;
-    private List<String> matchesID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int tournamentID;
+
+    @ElementCollection
+    @CollectionTable(name = "tournamentTeamsList", joinColumns = {@JoinColumn(name = "tournamentID")})
+    @Column(name = "teams_id")
+    private List<Integer> teamsIDsList;
+
+    @ElementCollection
+    @CollectionTable(name = "tournamentTeamsLeftToPlayList", joinColumns = {@JoinColumn(name = "tournamentID")})
+    @Column(name = "teams_left_to_play_id")
+    private List<Integer> teamLeftToPlay;
+
+    private int winnerID;
+
+    @ElementCollection
+    @CollectionTable(name= "tournamentMatchesList", joinColumns = {@JoinColumn(name="tournamentID")})
+    @Column(name = "matches_id")
+    private List<Integer> matchesID;
+
     private int maxBalls;
     private int totalPlayers;
 
-    public Tournament() {
-    }
-
-    public Tournament(List<String> teamsIDsList, int maxBalls, int totalPlayers) {
-        this.teamsIDsList = teamsIDsList;
+    public Tournament(List<Integer> teamsIDsList, int maxBalls, int totalPlayers) {
         this.maxBalls = maxBalls;
         this.totalPlayers = totalPlayers;
+        this.teamsIDsList = teamsIDsList;
     }
 
-    @Override
-    public String toString() {
-        return "Tournament{" + "tournamentID='" + tournamentID + '\'' + ", teamsIDsList=" + teamsIDsList +
-               ", teamLeftToPlay=" + teamLeftToPlay + ", winnerID='" + winnerID + '\'' + ", matchesID=" + matchesID +
-               ", maxBalls=" + maxBalls + ", totalPlayers=" + totalPlayers + '}';
+    public Tournament() {
     }
 }

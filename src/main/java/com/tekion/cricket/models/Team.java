@@ -1,33 +1,37 @@
 package com.tekion.cricket.models;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document("Teams")
+@Entity
 @Data
 public class Team {
 
+
     @Id
-    @Indexed(unique = true)
-    private String teamID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int teamID;
+    @Column(name = "Name")
     private String teamName;
-    private List<String> playersIDsList;
+    @ElementCollection
+    @Column(name = "player_id")
+    @CollectionTable(name = "playersList", joinColumns = {@JoinColumn(name = "teamID")})
+    private List<Integer> playersIDsList;
     private int matchesWon;
     private int matchesPlayed;
 
     public Team() {
     }
 
+
     @Override
     public String toString() {
         return "" + playersIDsList;
     }
 
-    public Team(String teamName, List<String> playersIDsList, int matchesWon, int matchesPlayed) {
+    public Team(String teamName, List<Integer> playersIDsList, int matchesWon, int matchesPlayed) {
         this.teamName = teamName;
         this.playersIDsList = playersIDsList;
         System.out.println("List: " + this.playersIDsList);
@@ -35,11 +39,11 @@ public class Team {
         this.matchesPlayed = matchesPlayed;
     }
 
-    public void addMatchesWon() {
-        this.matchesWon++;
+    public void addMatchesPlayed() {
+        this.matchesPlayed ++;
     }
 
-    public void addMatchesPlayed() {
-        this.matchesPlayed++;
+    public void addMatchesWon() {
+        this.matchesWon ++;
     }
 }

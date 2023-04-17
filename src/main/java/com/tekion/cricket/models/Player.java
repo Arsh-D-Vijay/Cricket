@@ -1,29 +1,31 @@
 package com.tekion.cricket.models;
 
-//import jakarta.persistence.*;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
+@Entity
 @Data
-@Document("Players")
 public class Player {
-
     @Id
-    @Indexed(unique = true)
-    private String playersID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "playersID")
+    private int playersID;
+    @Column(name = "playerName")
     private String name;
+    @Column(name = "playingStyle")
     private int playingStyle;
+    @Column(name = "totalRunsScored")
     private int totalRunsScored;
+    @Column(name = "totalWicketsTaken")
     private int totalWicketsTaken;
 
     public Player() {
     }
 
     public Player(String name, int playingStyle) {
+        //        this.playersID = playerID;
         this.name = name;
+        //        this.teamID = teamID;
         this.playingStyle = playingStyle;
         this.totalRunsScored = 0;
         this.totalWicketsTaken = 0;

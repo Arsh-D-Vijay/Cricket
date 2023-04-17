@@ -4,7 +4,6 @@ import com.tekion.cricket.models.Tournament;
 import com.tekion.cricket.services.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,7 +19,7 @@ public class TournamentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getByID(@PathVariable("id") String id) {
+    public ResponseEntity<Object> getByID(@PathVariable("id") int id) {
         return tournamentService.getTournamentByID(id);
     }
 
@@ -31,13 +30,13 @@ public class TournamentController {
     }
 
     @PutMapping("/{id}/play")
-    public ResponseEntity<Object> playTournament(@PathVariable("id") String id) {
+    public ResponseEntity<Object> playTournament(@PathVariable("id") int id) {
         return tournamentService.tournamentPlay(id);
 
     }
 
     @PutMapping("/{id}/asyncPlay")
-    public ResponseEntity<Object> asyncGame(@PathVariable("id") String id) {
+    public ResponseEntity<Object> asyncGame(@PathVariable("id") int id) {
         return tournamentService.tournamentAsyncPlay(id);
     }
 

@@ -1,26 +1,29 @@
 package com.tekion.cricket.models;
 
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+@Entity
 @Data
-@Document("BallOutcomes")
 public class BallOutcome {
+
     @Id
-    @Indexed(unique = true)
-    private String ballID;
-    private String gameID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int ballID;
+    private int gameID;
     private int ballNumber;
-    private String teamID;
-    private String strikerID;
+    private int teamID;
+    private int strikerID;
     private int ballOutcome;
+
     public BallOutcome() {
     }
 
-    public BallOutcome(String gameID,String teamID, int ballNumber, String strikerID, int ballOutcome) {
+    public BallOutcome(int gameID, int teamID, int ballNumber, int strikerID, int ballOutcome) {
         this.teamID = teamID;
         this.gameID = gameID;
         this.ballNumber = ballNumber;

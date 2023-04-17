@@ -19,15 +19,21 @@ public class TeamService {
         }
     }
 
-    public ResponseEntity<Object> getByID(String id){
+    public ResponseEntity<Object> getByID(int id){
         if(teamsRepo.findById(id).isPresent()){
             return ResponseEntity.ok(teamsRepo.findById(id).get());
         }else{
             return ResponseEntity.notFound().build();
         }
     }
-    public Team getTeamByID(String id){
-        return teamsRepo.findById(id).get();
+    public ResponseEntity<Object> getTeamByID(int id){
+        Team team;
+        if (teamsRepo.findById(id).isPresent()) {
+            team = teamsRepo.findById(id).get();
+        } else {
+            return ResponseEntity.badRequest().body("TEAM NOT FOUND");
+        }
+        return ResponseEntity.ok(team);
     }
 
     public ResponseEntity<Object> updateTeam(Team team){

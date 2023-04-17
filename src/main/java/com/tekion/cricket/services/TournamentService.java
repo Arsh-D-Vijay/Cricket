@@ -5,11 +5,9 @@ import com.tekion.cricket.models.Tournament;
 import com.tekion.cricket.repository.TournamentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -30,7 +28,7 @@ public class TournamentService {
         }
     }
 
-    public ResponseEntity<Object> getTournamentByID(String id) {
+    public ResponseEntity<Object> getTournamentByID(int id) {
         if (tournamentRepo.findById(id).isPresent()) {
             return ResponseEntity.ok(tournamentRepo.findById(id).get());
         } else {
@@ -47,7 +45,7 @@ public class TournamentService {
         }
     }
 
-    public ResponseEntity<Object> tournamentPlay(String id) {
+    public ResponseEntity<Object> tournamentPlay(int id) {
         Tournament tournament;
         if (tournamentRepo.findById(id).isPresent()) {
             tournament = tournamentRepo.findById(id).get();
@@ -74,7 +72,7 @@ public class TournamentService {
             try {
                 tournament.getTeamLeftToPlay().add(gameUpdated.getWinnerID());
             } catch (Exception e) {
-                List<String> match = new ArrayList<>();
+                List<Integer> match = new ArrayList<>();
                 match.add(gameUpdated.getWinnerID());
                 tournament.setTeamLeftToPlay(match);
             }
@@ -82,9 +80,9 @@ public class TournamentService {
             System.out.println(tournament.getTeamLeftToPlay());
 
             if (tournament.getMatchesID() == null) {
-                String gameID = gameUpdated.getGameID();
+                int gameID = gameUpdated.getGameID();
 
-                List<String> match = new ArrayList<>();
+                List<Integer> match = new ArrayList<>();
                 match.add(gameID);
                 tournament.setMatchesID(match);
             } else {
@@ -100,7 +98,7 @@ public class TournamentService {
         return ResponseEntity.ok("TOURNAMENT FINISHED !!");
     }
 
-    public ResponseEntity<Object> tournamentAsyncPlay(String id) {
+    public ResponseEntity<Object> tournamentAsyncPlay(int id) {
         Tournament tournament1;
         if (tournamentRepo.findById(id).isPresent()) {
             tournament1 = tournamentRepo.findById(id).get();
@@ -117,19 +115,19 @@ public class TournamentService {
             Tournament tournament = tournament1;
             System.out.println("--------------LOOP-----------");
             CountDownLatch latch = new CountDownLatch(tournament.getTeamLeftToPlay().size() / 2);
-            List<String> winners = new ArrayList<>();
+            List<Integer> winners = new ArrayList<>();
 
             for (int i = 0; i < tournament.getTeamLeftToPlay().size(); i += 2) {
-                String team1ID = tournament.getTeamLeftToPlay().get(i);
-                String team2ID = tournament.getTeamLeftToPlay().get(i + 1);
+                int team1ID = tournament.getTeamLeftToPlay().get(i);
+                int team2ID = tournament.getTeamLeftToPlay().get(i + 1);
                 System.out.println("-----MATCH STAGED----" + team1ID +"  "+ team2ID);
                 //                final CountDownLatch matchLatch = latch;
                 executorService.submit(() -> {
-                    String[] game = playMatch(team1ID, team2ID, maxBalls, totalPlayers);
+                    Integer[] game = playMatch(team1ID, team2ID, maxBalls, totalPlayers);
                     System.out.println("-----MATCH PLAYED----" + game[0] +  "  :  " + game[1]);
                     if (tournament.getMatchesID() == null) {
                         System.out.println("if");
-                        List<String> match = new ArrayList<>();
+                        List<Integer> match = new ArrayList<>();
                         match.add(game[0]);
                         tournament.setMatchesID(match);
                         System.out.println("Everything is ok in if");
@@ -140,7 +138,7 @@ public class TournamentService {
                         tournament.setMatchesID(tournament.getMatchesID());
                         System.out.println("Everything is ok in else");
                     }
-                    String winner = game[1];
+                    int winner = game[1];
                     tournamentRepo.save(tournament);
                     winners.add(winner);
                     System.out.println("Winners : " + winners);
@@ -170,7 +168,7 @@ public class TournamentService {
     }
 
 
-    private String[] playMatch(String teamAID, String teamBID, int maxBalls, int totalPlayers) {
+    private Integer[] playMatch(int teamAID, int teamBID, int maxBalls, int totalPlayers) {
         //        System.out.println("AM I PLAYING");
         Game game = new Game(teamAID, teamBID, maxBalls, totalPlayers);
         gameService.initializeNewGame(game);
@@ -178,7 +176,7 @@ public class TournamentService {
         gameService.Autoplay(game.getGameID());
         //        System.out.println("YES I DID");
         game = (Game) gameService.getGameByID(game.getGameID()).getBody();
-        return new String[] {game.getGameID(), game.getWinnerID() };
+        return new Integer[] {game.getGameID(), game.getWinnerID() };
     }
 }
 
